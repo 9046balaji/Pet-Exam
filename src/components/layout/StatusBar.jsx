@@ -1,4 +1,4 @@
-import React from "react";
+
 import { fmtTime, cambScale } from "../../utils/readingHelpers";
 
 export default function StatusBar({
@@ -29,7 +29,7 @@ export default function StatusBar({
         </span>
         <button
           onClick={() => setRunning((r) => !r)}
-          className="bg-transparent border border-border-light rounded-sm px-2 py-0.5 cursor-pointer text-[0.75em] font-semibold text-text-muted hover:bg-slate-50 transition-colors"
+          className="bg-transparent border border-border-light rounded-sm px-2 py-0.5 cursor-pointer text-[0.75em] font-semibold text-text-muted hover:bg-surface dark:hover:bg-slate-800 transition-colors"
         >
           {running ? "⏸ Pause" : "▶ Resume"}
         </button>
@@ -39,7 +39,7 @@ export default function StatusBar({
         <span className="text-primary font-bold">{answered}</span> of {total} answered
       </div>
 
-      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border-light bg-white">
+      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border-light bg-card">
         <span className="text-[0.72em] text-text-muted">Est. level</span>
         <span className="font-bold text-[0.85em]" style={{ color }}>
           {level}

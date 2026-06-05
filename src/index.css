@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ═══════════════════════════════════════════════════════════════════
    DESIGN TOKENS (Tailwind v4 theme)
@@ -17,8 +18,9 @@
   --color-border: #E8E6F5;
   --color-border-light: #E2E0F0;
   --color-text: #2D3436;
-  --color-text-muted: #636E72;
-  --color-text-light: #9CA3AF;
+  --color-text-muted: #555A63;
+  --color-text-light: #6B7280;
+  --color-sidebar-bg: #4A3D7D;
 
   --font-family-ui: 'Inter', system-ui, sans-serif;
   --font-family-reading: 'Lora', Georgia, serif;
@@ -28,6 +30,26 @@
   --radius-lg: 14px;
   --radius-xl: 18px;
   --radius-full: 9999px;
+}
+
+/* Dark mode color overrides */
+.dark {
+  --color-primary: #9B8FFF;
+  --color-primary-light: #6B5FBF;
+  --color-primary-dark: #2A1E4F;
+  --color-primary-hover: #7B6FDF;
+  --color-success: #00E8B6;
+  --color-warning: #FFE680;
+  --color-danger: #FF7B70;
+  --color-neutral: #B0B9C3;
+  --color-surface: #0F1016;
+  --color-card: #1D1E24;
+  --color-border: #323642;
+  --color-border-light: #252A32;
+  --color-text: #F0F1F8;
+  --color-text-muted: #B0B9C3;
+  --color-text-light: #8A92A0;
+  --color-sidebar-bg: #2A223D;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -60,8 +82,8 @@ body {
   gap: 8px;
   padding: 9px 18px;
   border-radius: var(--radius-full);
-  border: 2px solid #D1D5DB;
-  background: #FAFAF9;
+  border: 2px solid var(--color-border);
+  background: var(--color-card);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.88em;
@@ -74,6 +96,7 @@ body {
 .chip:hover:not(:disabled) {
   border-color: var(--color-primary);
   background: var(--color-primary-light);
+  color: var(--color-primary-dark);
 }
 .chip.sel {
   background: var(--color-primary);
@@ -338,6 +361,39 @@ body {
 .scrollpanel::-webkit-scrollbar { width: 5px; }
 .scrollpanel::-webkit-scrollbar-track { background: transparent; }
 .scrollpanel::-webkit-scrollbar-thumb { background: #D1C8FA; border-radius: 99px; }
+
+/* Dark mode overrides for shared UI primitives */
+.dark .stile {
+  background: var(--color-card);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+.dark .dzone {
+  background: var(--color-card);
+  border-color: var(--color-border);
+  color: var(--color-text-light);
+}
+.dark .qnav {
+  background: var(--color-card);
+  border-color: var(--color-border);
+}
+.dark .qcard:hover {
+  box-shadow: 0 5px 18px rgba(155, 143, 255, 0.15);
+  border-color: var(--color-primary);
+}
+.dark .iinp.err {
+  background: rgba(255, 123, 112, 0.12);
+}
+.dark .scrollpanel::-webkit-scrollbar-thumb { background: #4A3D7D; }
+
+/* Dark mode notepad area for writing editor */
+.dark .notepad-area {
+  background: var(--color-card) !important;
+  background-image: repeating-linear-gradient(transparent, transparent 27px, var(--color-border) 27px, var(--color-border) 28px) !important;
+  border-left-color: #9B8FFF !important;
+  color: var(--color-text) !important;
+}
+.dark .notepad-area::placeholder { color: var(--color-text-light) !important; }
 
 /* ═══════════════════════════════════════════════════════════════════
    RESPONSIVE — stack columns on small screens

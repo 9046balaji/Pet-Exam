@@ -1,4 +1,4 @@
-import React from "react";
+
 
 export default function AnnotatedEssay({ text, annotations }) {
   if (!annotations || annotations.length === 0)

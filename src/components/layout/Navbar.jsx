@@ -1,4 +1,4 @@
-import React from "react";
+import { useTheme } from "../../context/useTheme";
 
 export default function Navbar({
   currentPart,
@@ -10,10 +10,7 @@ export default function Navbar({
   getProgress,
   isSidebarOpen,
   setSidebarOpen,
-  fontScale,
-  setFontScale,
   focusMode,
-  setFocusMode,
 }) {
   const P_LABELS = [
     "Short Texts",
@@ -225,7 +222,6 @@ export default function Navbar({
 }
 
 export function TopHeader({
-  fontScale,
   setFontScale,
   focusMode,
   setFocusMode,
@@ -236,6 +232,7 @@ export function TopHeader({
   setSidebarOpen,
   isSidebarOpen,
 }) {
+  const { theme, toggleTheme } = useTheme();
   const P_LABELS = [
     "Short Texts",
     "Matching",
@@ -266,7 +263,7 @@ export function TopHeader({
   }
 
   return (
-    <header className="bg-white border-b border-border px-5 h-[54px] flex items-center justify-between gap-4 sticky top-0 z-[200] shadow-[0_1px_4px_rgba(0,0,0,0.03)] no-print select-none">
+    <header className="bg-card border-b border-border px-5 h-[54px] flex items-center justify-between gap-4 sticky top-0 z-[200] shadow-[0_1px_4px_rgba(0,0,0,0.1)] no-print select-none dark:shadow-[0_1px_4px_rgba(0,0,0,0.3)]">
       {/* Left: Toggle + Breadcrumb */}
       <div className="flex items-center gap-3 min-w-0">
         {/* Toggle Menu Button */}
@@ -292,9 +289,9 @@ export function TopHeader({
       {/* Right: Controls */}
       <div className="flex items-center gap-2.5 shrink-0">
         {/* Font Size */}
-        <div className="bg-slate-100/80 p-0.5 rounded-lg flex items-center border border-border-light gap-0.5 shadow-xs">
+        <div className="bg-slate-100/80 dark:bg-slate-700/60 p-0.5 rounded-lg flex items-center border border-border-light gap-0.5 shadow-xs">
           <button
-            className="px-2.5 py-1 rounded text-[0.78em] font-extrabold text-text transition-all cursor-pointer hover:bg-white hover:shadow-xs"
+            className="px-2.5 py-1 rounded text-[0.78em] font-extrabold text-text transition-all cursor-pointer hover:bg-card hover:shadow-xs"
             onClick={() => setFontScale((s) => Math.max(0.85, +(s - 0.1).toFixed(2)))}
             title="Decrease font size"
           >
@@ -302,7 +299,7 @@ export function TopHeader({
           </button>
           <div className="w-[1px] h-3.5 bg-border-light" />
           <button
-            className="px-2.5 py-1 rounded text-[0.78em] font-extrabold text-text transition-all cursor-pointer hover:bg-white hover:shadow-xs"
+            className="px-2.5 py-1 rounded text-[0.78em] font-extrabold text-text transition-all cursor-pointer hover:bg-card hover:shadow-xs"
             onClick={() => setFontScale((s) => Math.min(1.3, +(s + 0.1).toFixed(2)))}
             title="Increase font size"
           >
@@ -315,7 +312,7 @@ export function TopHeader({
           className={`px-3 py-1 rounded-lg text-[0.78em] font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
             focusMode
               ? "bg-warning text-primary-dark shadow-sm border border-warning/10"
-              : "text-text-muted border border-border hover:text-text hover:bg-slate-50"
+              : "text-text-muted border border-border hover:text-text hover:bg-surface dark:hover:bg-slate-700"
           }`}
           onClick={() => setFocusMode((m) => !m)}
         >
@@ -338,9 +335,18 @@ export function TopHeader({
           ST
         </div>
 
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-[1.1em] text-text-light hover:text-text hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer duration-300"
+          title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
+
         {/* Settings */}
         <button
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-[1.1em] text-text-light hover:text-text hover:bg-slate-50 transition-all cursor-pointer duration-300 hover:rotate-45"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-[1.1em] text-text-light hover:text-text hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer duration-300 hover:rotate-45"
           title="Settings"
         >
           ⚙

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -68,19 +68,7 @@ export default function ProfileAnalytics({
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  // Recalculate on focus
-  useEffect(() => {
-    const savedProfile = localStorage.getItem("petPrepProfile");
-    if (savedProfile) setProfile(JSON.parse(savedProfile));
-
-    const savedAttempts = localStorage.getItem("petPrepAttempts");
-    if (savedAttempts) setAttempts(JSON.parse(savedAttempts));
-  }, []);
-
   const totalAttempts = attempts.length;
-  const examDate = profile ? new Date(profile.targetExamDate) : new Date();
-  const diffTime = examDate - new Date();
-  const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
 
   // Calculate averages
   const getAverage = (key) => {
@@ -185,7 +173,9 @@ Candidate metrics:
 
     // --- Elegant Local Generator Fallback ---
     setTimeout(() => {
+      // eslint-disable-next-line no-useless-assignment
       let focusTip = "";
+      // eslint-disable-next-line no-useless-assignment
       let exercises = [];
       if (weakestArea === "content") {
         focusTip = "Focusing on answering all bullet points thoroughly and avoiding irrelevant descriptions.";
@@ -269,24 +259,24 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
     return text.split("\n").map((line, idx) => {
       let cleanLine = line.trim();
       if (cleanLine.startsWith("###")) {
-        return <h4 key={idx} className="text-[1.1em] font-bold text-gray-800 mt-5 mb-2">{cleanLine.replace("###", "").trim()}</h4>;
+        return <h4 key={idx} className="text-[1.1em] font-bold text-text mt-5 mb-2">{cleanLine.replace("###", "").trim()}</h4>;
       }
       if (cleanLine.startsWith("##")) {
-        return <h3 key={idx} className="text-[1.3em] font-bold text-indigo-700 mt-6 mb-3 border-b border-gray-200 pb-1.5">{cleanLine.replace("##", "").trim()}</h3>;
+        return <h3 key={idx} className="text-[1.3em] font-bold text-primary mt-6 mb-3 border-b border-border pb-1.5">{cleanLine.replace("##", "").trim()}</h3>;
       }
       if (cleanLine.startsWith("#")) {
-        return <h2 key={idx} className="text-[1.5em] font-extrabold text-indigo-900 mt-7 mb-4">{cleanLine.replace("#", "").trim()}</h2>;
+        return <h2 key={idx} className="text-[1.5em] font-extrabold text-primary-dark dark:text-primary mt-7 mb-4">{cleanLine.replace("#", "").trim()}</h2>;
       }
       if (cleanLine.startsWith("-") || cleanLine.startsWith("*")) {
-        return <li key={idx} className="ml-5 list-disc text-sm text-gray-600 my-1">{cleanLine.substring(1).trim()}</li>;
+        return <li key={idx} className="ml-5 list-disc text-sm text-text-muted my-1">{cleanLine.substring(1).trim()}</li>;
       }
       if (/^\d+\./.test(cleanLine)) {
-        return <li key={idx} className="ml-5 list-decimal text-sm text-gray-600 my-1.5">{cleanLine.replace(/^\d+\./, "").trim()}</li>;
+        return <li key={idx} className="ml-5 list-decimal text-sm text-text-muted my-1.5">{cleanLine.replace(/^\d+\./, "").trim()}</li>;
       }
       if (!cleanLine) {
         return <div key={idx} className="h-3" />;
       }
-      return <p key={idx} className="text-sm text-gray-700 leading-relaxed my-2">{cleanLine}</p>;
+      return <p key={idx} className="text-sm text-text leading-relaxed my-2">{cleanLine}</p>;
     });
   };
 
@@ -294,29 +284,29 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
 
   return (
     <div
-      className="min-h-screen bg-[#F5F5F0] overflow-y-auto"
+      className="min-h-screen bg-surface overflow-y-auto"
       style={{ padding: "24px 20px 100px", fontSize: `${fontScale}em` }}
     >
       <div className="space-y-6 max-w-[1200px] mx-auto pb-12">
         {/* Welcome Card & Level Progress */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Profile Card */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col items-center justify-between text-center relative overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-6 flex flex-col items-center justify-between text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full -z-10" />
             <div className="text-5xl mt-2 select-none mb-3 bg-purple-50 p-4 rounded-full border border-purple-100">{profile.avatarEmoji || "🎯"}</div>
             <div>
-              <h3 className="font-extrabold text-gray-800 text-lg">{profile.name}</h3>
-              <p className="text-xs text-gray-500 font-medium">B1 Candidate</p>
+              <h3 className="font-extrabold text-text text-lg">{profile.name}</h3>
+              <p className="text-xs text-text-muted font-medium">B1 Candidate</p>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-100 w-full flex items-center justify-around text-left">
+            <div className="mt-4 pt-4 border-t border-border w-full flex items-center justify-around text-left">
               <div>
-                <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Target Date</p>
-                <p className="text-xs font-bold text-gray-700">{profile.targetExamDate ? new Date(profile.targetExamDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "Not Set"}</p>
+                <p className="text-[10px] text-text-light uppercase font-bold tracking-wider">Target Date</p>
+                <p className="text-xs font-bold text-text">{profile.targetExamDate ? new Date(profile.targetExamDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "Not Set"}</p>
               </div>
-              <div className="h-6 w-px bg-gray-200" />
+              <div className="h-6 w-px bg-border" />
               <div>
-                <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Target Band</p>
-                <p className="text-xs font-bold text-indigo-600">{profile.targetBand?.replace(" (B1)", "") || "Merit"}</p>
+                <p className="text-[10px] text-text-light uppercase font-bold tracking-wider">Target Band</p>
+                <p className="text-xs font-bold text-primary">{profile.targetBand?.replace(" (B1)", "") || "Merit"}</p>
               </div>
             </div>
           </div>
@@ -324,58 +314,58 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
           {/* Streak & Time Cards */}
           <div className="grid grid-cols-1 gap-6">
             {/* Streak Card */}
-            <div className="bg-[#FAF9F6] rounded-2xl border border-amber-200 p-5 flex items-center gap-4 shadow-sm relative overflow-hidden">
-              <div className="text-3xl bg-amber-100/70 p-3 rounded-xl border border-amber-200 select-none">🔥</div>
+            <div className="bg-card dark:bg-card rounded-2xl border border-border p-5 flex items-center gap-4 shadow-sm relative overflow-hidden">
+              <div className="text-3xl bg-amber-100/70 dark:bg-amber-900/30 p-3 rounded-xl border border-amber-200 dark:border-amber-700 select-none">🔥</div>
               <div>
-                <span className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Study Streak</span>
-                <h4 className="text-xl font-black text-gray-800">{profile.studyStreakDays || 0} Days</h4>
-                <p className="text-xs text-gray-500 font-medium">Keep writing daily to hold the streak!</p>
+                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">Study Streak</span>
+                <h4 className="text-xl font-black text-text">{profile.studyStreakDays || 0} Days</h4>
+                <p className="text-xs text-text-muted font-medium">Keep writing daily to hold the streak!</p>
               </div>
             </div>
             {/* Time Card */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-5 flex items-center gap-4 shadow-sm">
+            <div className="bg-card rounded-2xl border border-border p-5 flex items-center gap-4 shadow-sm">
               <div className="text-3xl bg-indigo-50 p-3 rounded-xl border border-indigo-100 select-none">⏱️</div>
               <div>
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Effort</span>
-                <h4 className="text-xl font-black text-gray-800">{profile.totalStudyMinutes || 0} Minutes</h4>
-                <p className="text-xs text-gray-500 font-medium">Practice time spent on PETPrep</p>
+                <span className="text-[10px] text-text-light font-bold uppercase tracking-wider">Total Effort</span>
+                <h4 className="text-xl font-black text-text">{profile.totalStudyMinutes || 0} Minutes</h4>
+                <p className="text-xs text-text-muted font-medium">Practice time spent on PETPrep</p>
               </div>
             </div>
           </div>
 
           {/* XP Progress Card */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col justify-between">
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-6 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Level Badge</span>
-                <h4 className="text-lg font-black text-gray-800">Level {profile.level || 1}</h4>
+                <span className="text-[10px] text-text-light font-bold uppercase tracking-wider">Level Badge</span>
+                <h4 className="text-lg font-black text-text">Level {profile.level || 1}</h4>
               </div>
-              <div className="bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl shadow-sm">
+              <div className="bg-gradient-to-tr from-primary-dark to-primary text-white font-extrabold text-xs px-3 py-1.5 rounded-xl shadow-sm">
                 {profile.xp || 0} XP
               </div>
             </div>
             <div className="mt-4">
-              <div className="flex items-center justify-between text-xs font-semibold text-gray-500 mb-1.5">
+              <div className="flex items-center justify-between text-xs font-semibold text-text-muted mb-1.5">
                 <span>Progress to Level {profile.level + 1}</span>
                 <span>{(profile.xp % 500)} / 500 XP</span>
               </div>
-              <div className="h-3 rounded-full bg-gray-100 overflow-hidden border border-gray-150">
+              <div className="h-3 rounded-full bg-border overflow-hidden border border-border-light">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-1000"
+                  className="h-full bg-gradient-to-r from-primary-dark to-primary transition-all duration-1000"
                   style={{ width: `${((profile.xp % 500) / 500) * 100}%` }}
                 />
               </div>
             </div>
-            <p className="text-xs text-gray-400 mt-2 font-medium">Earn XP by completing writing tasks and receiving scoring feedback!</p>
+            <p className="text-xs text-text-light mt-2 font-medium">Earn XP by completing writing tasks and receiving scoring feedback!</p>
           </div>
         </div>
 
         {/* Grid of Analytics Graphs */}
         {totalAttempts === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-sm">
+          <div className="bg-card rounded-2xl border border-border p-12 text-center shadow-sm">
             <div className="text-5xl mb-4 select-none">📊</div>
-            <h3 className="font-extrabold text-gray-800 text-lg mb-2">No attempts recorded yet</h3>
-            <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
+            <h3 className="font-extrabold text-text text-lg mb-2">No attempts recorded yet</h3>
+            <p className="text-sm text-text-muted max-w-md mx-auto mb-6">
               Complete a Writing Paper practice essay and click "Get AI Feedback" to generate analysis metrics and view your progress charts.
             </p>
             <button
@@ -388,10 +378,10 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Chart 1: Score Progression over time */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
               <div className="mb-4">
-                <h3 className="font-extrabold text-gray-800 text-base">Cambridge Scale Progress</h3>
-                <p className="text-xs text-gray-500 font-medium">Chronological progression of B1 Scale scores (Target: 140+)</p>
+                <h3 className="font-extrabold text-text text-base">Cambridge Scale Progress</h3>
+                <p className="text-xs text-text-muted font-medium">Chronological progression of B1 Scale scores (Target: 140+)</p>
               </div>
               <div className="h-[280px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -413,10 +403,10 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
             </div>
 
             {/* Chart 2: Sub-criteria Strengths */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
               <div className="mb-4">
-                <h3 className="font-extrabold text-gray-800 text-base">Cambridge Sub-criteria Profile</h3>
-                <p className="text-xs text-gray-500 font-medium">Average score by rubric division (Content, Comm, Org, Lang - max 5.0)</p>
+                <h3 className="font-extrabold text-text text-base">Cambridge Sub-criteria Profile</h3>
+                <p className="text-xs text-text-muted font-medium">Average score by rubric division (Content, Comm, Org, Lang - max 5.0)</p>
               </div>
               <div className="h-[280px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -441,10 +431,10 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
             </div>
 
             {/* Chart 3: Task Balance */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
               <div className="mb-4">
-                <h3 className="font-extrabold text-gray-800 text-base">Task Type Balance</h3>
-                <p className="text-xs text-gray-500 font-medium">Distribution of submitted practices across B1 task divisions</p>
+                <h3 className="font-extrabold text-text text-base">Task Type Balance</h3>
+                <p className="text-xs text-text-muted font-medium">Distribution of submitted practices across B1 task divisions</p>
               </div>
               <div className="h-[280px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -465,16 +455,16 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
             </div>
 
             {/* 7-Day Study Plan Notepad */}
-            <div className="bg-[#FAF9F6] rounded-2xl border border-[#E8E0D8] shadow-sm p-6 relative overflow-hidden flex flex-col justify-between">
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-6 relative overflow-hidden flex flex-col justify-between">
               {/* Lined Paper Lines Background */}
               <div className="absolute top-0 right-0 w-2 h-full bg-pink-100" />
               <div className="z-10 flex-1">
-                <div className="flex items-center justify-between border-b-2 border-[#E8E0D8] pb-3 mb-4">
-                  <h3 className="font-extrabold text-gray-800 text-base flex items-center gap-2">
+                <div className="flex items-center justify-between border-b-2 border-border pb-3 mb-4">
+                  <h3 className="font-extrabold text-text text-base flex items-center gap-2">
                     <span>📅</span> Personalised 7-Day B1 Study Plan
                   </h3>
                   {studyPlan && (
-                    <span className="text-[10px] text-gray-400 font-semibold bg-white border border-gray-200 px-2.5 py-1 rounded-lg">
+                    <span className="text-[10px] text-text-muted font-semibold bg-card border border-border px-2.5 py-1 rounded-lg">
                       Generated: {new Date(studyPlan.generatedAt).toLocaleDateString()}
                     </span>
                   )}
@@ -483,24 +473,24 @@ Spend 5 minutes planning before writing, and 3 minutes checking for spelling and
                 {generatingPlan ? (
                   <div className="h-64 flex flex-col items-center justify-center gap-3 text-center">
                     <div className="w-8 h-8 rounded-full border-4 border-indigo-200 border-t-indigo-600 animate-spin" />
-                    <p className="text-sm font-semibold text-gray-600">Tailoring booster plan to your writing habits...</p>
+                    <p className="text-sm font-semibold text-text-muted">Tailoring booster plan to your writing habits...</p>
                   </div>
                 ) : studyPlan ? (
-                  <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar font-serif leading-relaxed text-gray-700 bg-white/50 p-4 rounded-xl border border-[#E8E0D8]">
+                  <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar font-serif leading-relaxed text-text bg-card/50 p-4 rounded-xl border border-border">
                     {renderMarkdown(studyPlan.planMarkdown)}
                   </div>
                 ) : (
                   <div className="h-64 flex flex-col items-center justify-center text-center p-6">
                     <span className="text-4xl mb-3 select-none">🧠</span>
-                    <h4 className="font-bold text-gray-800 text-sm mb-1.5">No plan generated yet</h4>
-                    <p className="text-xs text-gray-500 max-w-sm mb-4">
+                    <h4 className="font-bold text-text text-sm mb-1.5">No plan generated yet</h4>
+                    <p className="text-xs text-text-muted max-w-sm mb-4">
                       Our AI writing coach will analyze your weaknesses (currently focusing on <strong className="text-indigo-600">{weakestArea}</strong>) to craft a 7-day B1 Preliminary boost schedule.
                     </p>
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-[#E8E0D8] flex justify-end z-10">
+              <div className="mt-4 pt-3 border-t border-border flex justify-end z-10">
                 <button
                   onClick={generateStudyPlan}
                   disabled={generatingPlan}

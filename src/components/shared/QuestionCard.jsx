@@ -1,4 +1,4 @@
-import React from "react";
+
 import QNumBadge from "./QNumBadge";
 import FlagBtn from "./FlagBtn";
 
@@ -11,10 +11,8 @@ export default function QuestionCard({
   toggleFlag,
   submitted,
   delay,
-  opts4,
   stopProp
 }) {
-  const isCorrect = submitted && ans === question.correct;
   const isWrong = submitted && ans && ans !== question.correct;
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { EXAM_DATA } from "../../data/readingData";
 
 const ALL_QIDS = [
@@ -10,7 +10,7 @@ const ALL_QIDS = [
   ...EXAM_DATA.part6.gaps.map(g=>({id:g.id,part:6})),
 ];
 
-export default function BottomBar({ currentPart, setCurrent, answers, flagged, allAnswered, onSubmit }) {
+export default function BottomBar({ currentPart, setCurrent, answers, flagged, onSubmit }) {
   const [showNav, setShowNav] = useState(false);
   
   const getStatus = (id) => {

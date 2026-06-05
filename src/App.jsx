@@ -6,7 +6,6 @@ import Navbar, { TopHeader } from "./components/layout/Navbar";
 import PartTabs from "./components/layout/PartTabs";
 import StatusBar from "./components/layout/StatusBar";
 import BottomBar from "./components/layout/BottomBar";
-import ResultsScreen from "./components/layout/ResultsScreen";
 
 /* ── Parts ── */
 import { Part1Left, Part1Right } from "./components/reading/Part1";
@@ -111,18 +110,7 @@ export default function App() {
     setRunning(false);
   };
 
-  const handleRetry = () => {
-    setAnswers({});
-    setFlagged(new Set());
-    setSubmitted(false);
-    setCurrentPart(1);
-    setTimerSec(0);
-    setRunning(true);
-    setActivePara(null);
-  };
-
   const renderLeft = () => {
-    const props = { fontScale, answers, setAnswer: (id, v) => setAnswer(id, v) };
     switch (currentPart) {
       case 1: return <Part1Left fontScale={fontScale} />;
       case 2: return <Part2Left fontScale={fontScale} />;

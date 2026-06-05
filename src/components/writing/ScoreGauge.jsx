@@ -1,4 +1,4 @@
-import React from "react";
+
 
 export default function ScoreGauge({ score, maxScore, label, color }) {
   const pct = score / maxScore;
@@ -11,7 +11,7 @@ export default function ScoreGauge({ score, maxScore, label, color }) {
     <div className="flex flex-col items-center gap-1">
       <div className="relative" style={{ width: 88, height: 88 }}>
         <svg width="88" height="88" viewBox="0 0 88 88">
-          <circle cx="44" cy="44" r={r} fill="none" stroke="#e5e7eb" strokeWidth="7" />
+          <circle cx="44" cy="44" r={r} fill="none" stroke="var(--color-border)" strokeWidth="7" />
           <circle
             cx="44" cy="44" r={r} fill="none" stroke={c} strokeWidth="7"
             strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
@@ -23,7 +23,7 @@ export default function ScoreGauge({ score, maxScore, label, color }) {
           <span className="font-bold text-base" style={{ color: c }}>{score}/{maxScore}</span>
         </div>
       </div>
-      <span className="text-xs text-center font-medium capitalize" style={{ color: "#374151", maxWidth: 80 }}>{label}</span>
+      <span className="text-xs text-center font-medium capitalize text-text-muted" style={{ maxWidth: 80 }}>{label}</span>
     </div>
   );
 }

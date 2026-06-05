@@ -1,4 +1,4 @@
-import React from "react";
+
 
 const PICONS = ["📝", "🔗", "📖", "✂️", "🔤", "✏️"];
 
@@ -11,7 +11,7 @@ export default function PartTabs({ current, setCurrent, getProgress }) {
   };
 
   return (
-    <div className="bg-white border-b border-border flex overflow-x-auto sticky top-[54px] lg:top-0 z-[199] shadow-[0_1px_4px_rgba(0,0,0,0.04)] scrollpanel">
+    <div className="bg-card border-b border-border flex overflow-x-auto sticky top-[54px] lg:top-0 z-[199] shadow-[0_1px_4px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_4px_rgba(0,0,0,0.2)] scrollpanel">
       {[1, 2, 3, 4, 5, 6].map((p) => (
         <button
           key={p}

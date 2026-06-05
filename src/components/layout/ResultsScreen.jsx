@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { computeResults, cambScale } from "../../utils/readingHelpers";
 
 const PICONS = ['📝','🔗','📖','✂️','🔤','✏️'];

@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { WRITING_TASKS } from "../../data/writingData";
 import {
   wordCount,
   sentenceCount,
   paragraphCount,
-  avgSentenceLength,
   detectTone,
   detectPresentTense,
   formatTimer,
@@ -12,7 +11,7 @@ import {
 
 import PhraseBank from "./PhraseBank";
 import ResultsPanel from "./ResultsPanel";
-import { NotesModal, ConfirmModal } from "./Modals";
+import { ConfirmModal } from "./Modals";
 
 export default function WritingPaper({ fontScale, currentPart, setCurrentPart, focusMode, setFocusMode }) {
   // --- State ---
@@ -55,7 +54,6 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 
   // UI state
-  const [restoreToast, setRestoreToast] = useState(false);
   const [hoveredNote, setHoveredNote] = useState(null);
   const [overWordToast, setOverWordToast] = useState(false);
   const [confettiBurst, setConfettiBurst] = useState(false);
@@ -84,20 +82,22 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
   const currentWc = currentPart === 1 ? wordCount(part1Draft) : wordCount(part2Draft);
   useEffect(() => {
     if (currentWc >= 80 && currentWc <= 120) {
-      setConfettiBurst(true);
-      const t = setTimeout(() => setConfettiBurst(false), 600);
-      return () => clearTimeout(t);
+      setTimeout(() => {
+        setConfettiBurst(true);
+        setTimeout(() => setConfettiBurst(false), 600);
+      }, 0);
     }
   }, [currentWc]);
 
   // Over word limit warnings
   useEffect(() => {
     if (currentWc > 120) {
-      setOverWordToast(true);
-      const t = setTimeout(() => setOverWordToast(false), 3000);
-      return () => clearTimeout(t);
+      setTimeout(() => {
+        setOverWordToast(true);
+        setTimeout(() => setOverWordToast(false), 3000);
+      }, 0);
     } else {
-      setOverWordToast(false);
+      setTimeout(() => setOverWordToast(false), 0);
     }
   }, [currentWc]);
 
@@ -110,10 +110,12 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
     localStorage.setItem("petPrepPart2Choice", part2Choice || "");
 
     if (part1Draft.trim() || part2Draft.trim()) {
-      if (part1Status === "not_started" && part1Draft.trim()) setPart1Status("draft");
-      if (part2Status === "not_started" && part2Draft.trim()) setPart2Status("draft");
-
-      setSavedStatus("saved");
+      // Use setTimeout to avoid setState in effect warning
+      setTimeout(() => {
+        if (part1Status === "not_started" && part1Draft.trim()) setPart1Status("draft");
+        if (part2Status === "not_started" && part2Draft.trim()) setPart2Status("draft");
+        setSavedStatus("saved");
+      }, 0);
       const t = setTimeout(() => setSavedStatus("idle"), 2000);
       return () => clearTimeout(t);
     }
@@ -141,7 +143,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [focusMode]);
+  }, [focusMode, setFocusMode]);
 
   // --- Insertion Helper ---
   const insertPhrase = (phrase) => {
@@ -329,7 +331,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
 
   return (
     <div
-      className={`flex flex-col ${focusMode ? "fixed inset-0 z-50 bg-[#F8F6F0]" : "h-[calc(100vh-54px)] bg-[#F5F5F0]"}`}
+      className={`flex flex-col ${focusMode ? "fixed inset-0 z-50 bg-surface" : "h-[calc(100vh-54px)] bg-surface"}`}
       style={{ fontSize: `${fontScale}em` }}
     >
       {/* Styles */}
@@ -375,7 +377,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
 
       {/* Part selector header */}
       {!focusMode && (
-        <div className="no-print bg-white border-b border-gray-200 px-5 flex gap-1 shadow-sm">
+        <div className="no-print bg-card border-b border-border px-5 flex gap-1 shadow-sm">
           {[
             { part: 1, label: "Part 1 – Email (Compulsory)", status: part1Status },
             { part: 2, label: "Part 2 – Article or Story (Choose One)", status: part2Status },
@@ -385,8 +387,8 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
               onClick={() => setCurrentPart(part)}
               className={`flex items-center gap-2 px-5 py-4 text-sm font-semibold border-b-2 transition-colors ${
                 currentPart === part
-                  ? "border-purple-600 text-purple-700"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-purple-600 text-purple-700 dark:text-purple-400"
+                  : "border-transparent text-text-muted hover:text-text"
               }`}
             >
               <span className={`w-2.5 h-2.5 rounded-full ${statusDot(status)}`} />
@@ -398,23 +400,23 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
 
       {/* Status Bar */}
       {!focusMode && (
-        <div className="no-print bg-white border-b border-gray-100 px-5 py-2.5 flex items-center justify-between text-sm">
+        <div className="no-print bg-card border-b border-border px-5 py-2.5 flex items-center justify-between text-sm">
           <div className="flex items-center gap-3">
             <span className="font-mono font-bold text-lg" style={{ color: timerColor }}>
               {formatTimer(timerSeconds)}
             </span>
             <button
               onClick={() => setTimerRunning(!timerRunning)}
-              className="text-xs px-2.5 py-1 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 font-medium transition-colors"
+              className="text-xs px-2.5 py-1 rounded-lg border border-border text-text-muted hover:bg-surface font-medium transition-colors"
             >
               {timerRunning ? "⏸ Pause" : "▶ Start"}
             </button>
           </div>
-          <div className="text-gray-500 text-xs font-medium">
-            Part 1: <strong className="text-gray-700">{wc1} words</strong> · Part 2:{" "}
-            <strong className="text-gray-700">{wc2} words</strong>
+          <div className="text-text-muted text-xs font-medium">
+            Part 1: <strong className="text-text">{wc1} words</strong> · Part 2:{" "}
+            <strong className="text-text">{wc2} words</strong>
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-text-light">
             {savedStatus === "saved" ? (
               <>
                 <span className="pulse-dot w-2 h-2 rounded-full bg-green-400 inline-block" />
@@ -422,7 +424,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
               </>
             ) : (
               <>
-                <span className="w-2 h-2 rounded-full bg-gray-200 inline-block" />
+                <span className="w-2 h-2 rounded-full bg-border inline-block" />
                 <span>Autosave active</span>
               </>
             )}
@@ -445,45 +447,45 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
             {/* Left panel (brief) */}
             {!focusMode && !panelCollapsed && (
               <div
-                className="no-print border-r border-gray-200 bg-white flex flex-col overflow-y-auto"
+                className="no-print border-r border-border bg-card flex flex-col overflow-y-auto"
                 style={{ width: "38%", minWidth: 320 }}
               >
-                <div className="p-4 flex items-center justify-between border-b border-gray-100 bg-gray-50/50">
-                  <span className="font-bold text-gray-700 text-sm">Task Directions</span>
+                <div className="p-4 flex items-center justify-between border-b border-border bg-surface/50">
+                  <span className="font-bold text-text text-sm">Task Directions</span>
                   <button
                     onClick={() => setPanelCollapsed(true)}
-                    className="text-xs px-2.5 py-1 border border-gray-200 rounded hover:bg-gray-100 font-medium"
+                    className="text-xs px-2.5 py-1 border border-border rounded hover:bg-surface font-medium text-text-muted"
                   >
                     ◀ Hide
                   </button>
                 </div>
                 {/* Task prompt email card */}
                 <div className="p-5 space-y-4 flex-1">
-                  <p className="text-xs text-gray-400 leading-relaxed uppercase tracking-wider font-semibold">
+                  <p className="text-xs text-text-light leading-relaxed uppercase tracking-wider font-semibold">
                     Read this email from your English friend Alex and the notes you have made.
                   </p>
-                  <div className="rounded-2xl border border-gray-100 shadow-sm overflow-hidden bg-white">
-                    <div className="p-4 border-b border-gray-50 bg-gray-50/70 flex items-center gap-3">
+                  <div className="rounded-2xl border border-border shadow-sm overflow-hidden bg-card">
+                    <div className="p-4 border-b border-border bg-surface/70 flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold bg-purple-600">
                         {WRITING_TASKS.part1.email.avatarInitials}
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-800 text-sm">
+                        <div className="font-semibold text-text text-sm">
                           {WRITING_TASKS.part1.email.sender}
                         </div>
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-text-light">
                           {WRITING_TASKS.part1.email.date} · {WRITING_TASKS.part1.email.time}
                         </div>
                       </div>
                     </div>
                     <div className="p-4">
-                      <div className="font-bold text-gray-800 mb-3 text-sm">
+                      <div className="font-bold text-text mb-3 text-sm">
                         Subject: {WRITING_TASKS.part1.email.subject}
                       </div>
                       {WRITING_TASKS.part1.email.body.map((para) => (
                         <p
                           key={para.id}
-                          className="text-sm text-gray-700 leading-relaxed mb-3 rounded px-1 transition-colors duration-250"
+                          className="text-sm text-text leading-relaxed mb-3 rounded px-1 transition-colors duration-250"
                           style={{
                             background: WRITING_TASKS.part1.email.notes.some(
                               (n) => n.anchor === para.id && hoveredNote === n.id
@@ -499,7 +501,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                   </div>
                   {/* Notes check items */}
                   <div className="space-y-2.5">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Your checklist notes:</p>
+                    <p className="text-xs font-bold text-text-muted uppercase tracking-wider">Your checklist notes:</p>
                     {WRITING_TASKS.part1.email.notes.map((note, i) => (
                       <div
                         key={note.id}
@@ -522,13 +524,13 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                         <div
                           className="flex-1 rounded-xl px-4 py-2.5 border-l-4 text-sm"
                           style={{
-                            background: "#FFFBEB",
+                            background: "var(--color-surface)",
                             borderColor: note.color,
                             lineHeight: 1.4,
                           }}
                         >
-                          <span className="text-amber-700 font-semibold mr-1">Note #{note.id}:</span>
-                          <span className="text-gray-700 font-medium">{note.text}</span>
+                          <span className="text-amber-700 dark:text-amber-400 font-semibold mr-1">Note #{note.id}:</span>
+                          <span className="text-text font-medium">{note.text}</span>
                         </div>
                       </div>
                     ))}
@@ -551,23 +553,23 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Editor controls */}
               {!focusMode && (
-                <div className="no-print bg-white border-b border-gray-100 px-4 py-2 flex items-center gap-2 flex-wrap">
+                <div className="no-print bg-card border-b border-border px-4 py-2 flex items-center gap-2 flex-wrap">
                   <button
                     onClick={() => setFontSize((s) => Math.min(s + 1, 24))}
-                    className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg hover:bg-gray-50"
+                    className="text-xs px-2.5 py-1 border border-border rounded-lg hover:bg-surface"
                   >
                     A+
                   </button>
                   <button
                     onClick={() => setFontSize((s) => Math.max(s - 1, 12))}
-                    className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg hover:bg-gray-50"
+                    className="text-xs px-2.5 py-1 border border-border rounded-lg hover:bg-surface"
                   >
                     A−
                   </button>
-                  <div className="w-px h-4 bg-gray-200" />
+                  <div className="w-px h-4 bg-border" />
                   <button
                     onClick={() => setFocusMode(true)}
-                    className="text-xs px-3 py-1 border border-gray-200 rounded-lg hover:bg-gray-50 font-medium"
+                    className="text-xs px-3 py-1 border border-border rounded-lg hover:bg-surface font-medium"
                   >
                     ⛶ Focus Mode
                   </button>
@@ -585,7 +587,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                   >
                     Clear Draft
                   </button>
-                  <div className="w-px h-4 bg-gray-200" />
+                  <div className="w-px h-4 bg-border" />
                   <button
                     onClick={() => setShowPhraseBank((s) => !s)}
                     className={`text-xs px-3 py-1 border rounded-lg hover:bg-gray-50 font-medium ${
@@ -596,7 +598,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                   </button>
                   <button
                     onClick={() => setShowApiKeyModal(true)}
-                    className="text-xs px-3 py-1 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 font-medium ml-auto"
+                    className="text-xs px-3 py-1 border border-border rounded-lg text-text-muted hover:bg-surface font-medium ml-auto"
                   >
                     🔑 {apiKey ? "API Key Set" : "Add Anthropic Key"}
                   </button>
@@ -613,7 +615,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                 {/* Editor container */}
                 <div className="flex-1 flex flex-col p-5 overflow-auto">
                   <div
-                    className={`flex-1 rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-200 ${
+                    className={`flex-1 rounded-2xl shadow-sm overflow-hidden flex flex-col border border-border ${
                       focusMode ? "max-w-3xl mx-auto w-full" : ""
                     }`}
                   >
@@ -629,17 +631,17 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
 
                   {/* Word count stats */}
                   <div className="mt-4">
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                    <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                       <span className="font-semibold">{wc1} words</span>
                       <span>100 words target (B1 Limit)</span>
                     </div>
-                    <div className={`h-2.5 rounded-full bg-gray-200 overflow-hidden ${confettiBurst ? "confetti-burst" : ""}`}>
+                    <div className={`h-2.5 rounded-full bg-border overflow-hidden ${confettiBurst ? "confetti-burst" : ""}`}>
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{ width: `${barPct}%`, background: barColor }}
                       />
                     </div>
-                    <div className="flex gap-4 text-xs text-gray-400 mt-2 font-medium">
+                    <div className="flex gap-4 text-xs text-text-light mt-2 font-medium">
                       <span>Sentences: {sentenceCount(part1Draft)}</span>
                       <span>Paragraphs: {paragraphCount(part1Draft)}</span>
                       <span className="ml-auto px-2 py-0.5 rounded text-xs font-semibold" style={{ background: toneBg, color: toneText }}>
@@ -668,7 +670,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
 
                 {/* Phrasebank panel */}
                 {showPhraseBank && !focusMode && (
-                  <div className="no-print border-l border-gray-200 bg-white" style={{ width: 240 }}>
+                  <div className="no-print border-l border-border bg-card" style={{ width: 240 }}>
                     <PhraseBank
                       type={phraseType}
                       onInsert={insertPhrase}
@@ -686,19 +688,19 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
             {!part2Choice ? (
               /* Part 2 Choice page */
               <div className="flex-1 overflow-auto p-8 flex flex-col items-center justify-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose your Task for Part 2</h2>
-                <p className="text-sm text-gray-500 mb-8 max-w-md text-center">
+                <h2 className="text-2xl font-bold text-text mb-2">Choose your Task for Part 2</h2>
+                <p className="text-sm text-text-muted mb-8 max-w-md text-center">
                   In Cambridge B1 Preliminary, you can choose to write either an article or a story. Both have a target of ~100 words.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full">
                   {/* Article choice */}
                   <button
                     onClick={() => setPart2Choice("article")}
-                    className="p-6 rounded-2xl border-2 border-gray-200 hover:border-teal-500 hover:shadow-lg transition-all text-left bg-white"
+                    className="p-6 rounded-2xl border-2 border-border hover:border-teal-500 hover:shadow-lg transition-all text-left bg-card"
                   >
                     <div className="text-3xl mb-3">📰</div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Task A — Article</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    <h3 className="text-lg font-bold text-text mb-2">Task A — Article</h3>
+                    <p className="text-sm text-text-muted leading-relaxed mb-4">
                       "{WRITING_TASKS.part2.article.prompt}"
                     </p>
                     <div className="flex gap-2 flex-wrap mt-auto">
@@ -713,13 +715,13 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                   {/* Story choice */}
                   <button
                     onClick={() => setPart2Choice("story")}
-                    className="p-6 rounded-2xl border-2 border-gray-200 hover:border-teal-500 hover:shadow-lg transition-all text-left bg-white"
+                    className="p-6 rounded-2xl border-2 border-border hover:border-teal-500 hover:shadow-lg transition-all text-left bg-card"
                   >
                     <div className="text-3xl mb-3">📖</div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Task B — Story</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    <h3 className="text-lg font-bold text-text mb-2">Task B — Story</h3>
+                    <p className="text-sm text-text-muted leading-relaxed mb-4">
                       Write a story starting with:
-                      <span className="italic block mt-1 font-semibold text-gray-800">
+                      <span className="italic block mt-1 font-semibold text-text">
                         "{WRITING_TASKS.part2.story.openingSentence}"
                       </span>
                     </p>
@@ -739,10 +741,10 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                 {/* Guide left panel */}
                 {!focusMode && !panelCollapsed && (
                   <div
-                    className="no-print border-r border-gray-200 bg-white flex flex-col overflow-y-auto"
+                    className="no-print border-r border-border bg-card flex flex-col overflow-y-auto"
                     style={{ width: "38%", minWidth: 320 }}
                   >
-                    <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                    <div className="p-4 border-b border-border flex items-center justify-between bg-surface/50">
                       <button
                         onClick={() => setPart2Choice(null)}
                         className="text-xs text-purple-600 hover:underline font-semibold"
@@ -751,7 +753,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                       </button>
                       <button
                         onClick={() => setPanelCollapsed(true)}
-                        className="text-xs px-2.5 py-1 border border-gray-200 rounded hover:bg-gray-100 font-medium"
+                        className="text-xs px-2.5 py-1 border border-border rounded hover:bg-surface font-medium text-text-muted"
                       >
                         ◀ Hide
                       </button>
@@ -766,37 +768,37 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                             </p>
                           </div>
                           <div className="space-y-2">
-                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Story Narrative Guide</p>
+                            <p className="text-xs font-bold text-text-muted uppercase tracking-wider">Story Narrative Guide</p>
                             {[
                               ["Paragraph 1: Setup", "Begin using the opening sentence. Introduce characters and place."],
                               ["Paragraph 2: Conflict", "Describe what happened next. Add action verbs in past tense."],
                               ["Paragraph 3: Ending", "Wrap up the story. Explain how the mystery/situation resolved."],
                             ].map(([h, d]) => (
-                              <div key={h} className="p-3 bg-gray-50 rounded-xl text-xs">
-                                <strong className="text-gray-700 block mb-0.5">{h}</strong>
-                                <span className="text-gray-500">{d}</span>
+                              <div key={h} className="p-3 bg-surface rounded-xl text-xs">
+                                <strong className="text-text block mb-0.5">{h}</strong>
+                                <span className="text-text-muted">{d}</span>
                               </div>
                             ))}
                           </div>
                         </>
                       ) : (
                         <>
-                          <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/50">
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Article Prompt</span>
-                            <p className="text-sm text-gray-800 font-semibold mt-1 leading-relaxed">
+                          <div className="p-4 rounded-xl border border-border bg-surface/50">
+                            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Article Prompt</span>
+                            <p className="text-sm text-text font-semibold mt-1 leading-relaxed">
                               "{WRITING_TASKS.part2.article.prompt}"
                             </p>
                           </div>
                           <div className="space-y-2">
-                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Article Writing Guide</p>
+                            <p className="text-xs font-bold text-text-muted uppercase tracking-wider">Article Writing Guide</p>
                             {[
                               ["Paragraph 1: Introduction", "Catch the reader's attention with a question or statement."],
                               ["Paragraph 2: Supporting reasons", "Outline 2-3 points explaining your main opinion."],
                               ["Paragraph 3: Conclusion", "Synthesise your thoughts. End with a memorable suggestion."],
                             ].map(([h, d]) => (
-                              <div key={h} className="p-3 bg-gray-50 rounded-xl text-xs">
-                                <strong className="text-gray-700 block mb-0.5">{h}</strong>
-                                <span className="text-gray-500">{d}</span>
+                              <div key={h} className="p-3 bg-surface rounded-xl text-xs">
+                                <strong className="text-text block mb-0.5">{h}</strong>
+                                <span className="text-text-muted">{d}</span>
                               </div>
                             ))}
                           </div>
@@ -820,23 +822,23 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                 {/* Editor Area */}
                 <div className="flex-1 flex flex-col overflow-hidden">
                   {!focusMode && (
-                    <div className="no-print bg-white border-b border-gray-100 px-4 py-2 flex items-center gap-2 flex-wrap">
+                    <div className="no-print bg-card border-b border-border px-4 py-2 flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => setFontSize((s) => Math.min(s + 1, 24))}
-                        className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg hover:bg-gray-50"
+                        className="text-xs px-2.5 py-1 border border-border rounded-lg hover:bg-surface"
                       >
                         A+
                       </button>
                       <button
                         onClick={() => setFontSize((s) => Math.max(s - 1, 12))}
-                        className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg hover:bg-gray-50"
+                        className="text-xs px-2.5 py-1 border border-border rounded-lg hover:bg-surface"
                       >
                         A−
                       </button>
-                      <div className="w-px h-4 bg-gray-200" />
+                      <div className="w-px h-4 bg-border" />
                       <button
                         onClick={() => setFocusMode(true)}
-                        className="text-xs px-3 py-1 border border-gray-200 rounded-lg hover:bg-gray-50 font-medium"
+                        className="text-xs px-3 py-1 border border-border rounded-lg hover:bg-surface font-medium"
                       >
                         ⛶ Focus Mode
                       </button>
@@ -887,7 +889,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                         </div>
                       )}
                       <div
-                        className={`flex-1 shadow-sm overflow-hidden flex flex-col border border-gray-200 ${
+                        className={`flex-1 shadow-sm overflow-hidden flex flex-col border border-border ${
                           part2Choice === "story" ? "rounded-b-2xl border-t-0" : "rounded-2xl"
                         } ${focusMode ? "max-w-3xl mx-auto w-full" : ""}`}
                       >
@@ -907,11 +909,11 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
 
                       {/* Word Count */}
                       <div className="mt-4">
-                        <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                        <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                           <span className="font-semibold">{wc2} words</span>
                           <span>100 words target</span>
                         </div>
-                        <div className={`h-2.5 rounded-full bg-gray-200 overflow-hidden ${confettiBurst ? "confetti-burst" : ""}`}>
+                        <div className={`h-2.5 rounded-full bg-border overflow-hidden ${confettiBurst ? "confetti-burst" : ""}`}>
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{
@@ -920,7 +922,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                             }}
                           />
                         </div>
-                        <div className="flex gap-4 text-xs text-gray-400 mt-2 font-medium">
+                        <div className="flex gap-4 text-xs text-text-light mt-2 font-medium">
                           <span>Sentences: {sentenceCount(part2Draft)}</span>
                           <span>Paragraphs: {paragraphCount(part2Draft)}</span>
                         </div>
@@ -945,7 +947,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                     </div>
 
                     {showPhraseBank && !focusMode && (
-                      <div className="no-print border-l border-gray-200 bg-white" style={{ width: 240 }}>
+                      <div className="no-print border-l border-border bg-card" style={{ width: 240 }}>
                         <PhraseBank
                           type={phraseType}
                           onInsert={insertPhrase}
@@ -964,13 +966,13 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
 
       {/* Focus Mode HUD */}
       {focusMode && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-white/90 backdrop-blur rounded-full px-6 py-3 shadow-xl border border-gray-200">
-          <span className="text-sm font-semibold text-gray-700">{currentWc} words</span>
-          <span className="w-px h-4 bg-gray-200" />
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-card/90 backdrop-blur rounded-full px-6 py-3 shadow-xl border border-border">
+          <span className="text-sm font-semibold text-text">{currentWc} words</span>
+          <span className="w-px h-4 bg-border" />
           <span className="font-mono text-sm font-bold" style={{ color: timerColor }}>
             {formatTimer(timerSeconds)}
           </span>
-          <span className="w-px h-4 bg-gray-200" />
+          <span className="w-px h-4 bg-border" />
           <button
             onClick={() => setFocusMode(false)}
             className="text-xs font-bold text-purple-600 hover:text-purple-700"
@@ -983,9 +985,9 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
       {/* API Key Modal */}
       {showApiKeyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-2xl w-96 p-6">
-            <h3 className="font-bold text-gray-800 text-base mb-2">🔑 Configure Anthropic API Key</h3>
-            <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+          <div className="bg-card rounded-2xl shadow-2xl w-96 p-6 border border-border">
+            <h3 className="font-bold text-text text-base mb-2">🔑 Configure Anthropic API Key</h3>
+            <p className="text-xs text-text-muted mb-4 leading-relaxed">
               To get live, interactive exam-board feedback, supply your Anthropic Claude API Key. If left empty, a robust local scoring rubric evaluator will run instead.
             </p>
             <input
@@ -996,7 +998,7 @@ export default function WritingPaper({ fontScale, currentPart, setCurrentPart, f
                 setApiKey(e.target.value);
                 localStorage.setItem("petPrepApiKey", e.target.value);
               }}
-              className="w-full p-2.5 text-sm border border-gray-200 rounded-xl mb-4 font-mono focus:border-purple-500 focus:outline-none"
+              className="w-full p-2.5 text-sm border border-border rounded-xl mb-4 font-mono focus:border-purple-500 focus:outline-none bg-card text-text"
             />
             <div className="flex gap-2 justify-end">
               <button
