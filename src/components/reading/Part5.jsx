@@ -38,7 +38,7 @@ export function Part5Right({ answers, setAnswer, flagged, toggleFlag }) {
       {EXAM_DATA.part5.gaps.map((g, i) => {
         const ans = answers[g.id];
         return (
-          <div key={g.id} className="qcard fu" style={{animationDelay:`${i*55}ms`}}>
+          <div key={g.id} id={g.id} className="qcard fu" style={{animationDelay:`${i*55}ms`}}>
             <div style={{display:'flex',alignItems:'flex-start',gap:10,marginBottom:10}}>
               <QNumBadge n={i+21} />
               <div style={{flex:1}}>

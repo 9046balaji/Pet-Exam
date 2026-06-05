@@ -40,7 +40,7 @@ export function Part6Right({ answers, setAnswer, flagged, toggleFlag }) {
       {EXAM_DATA.part6.gaps.map((g, i) => {
         const val = answers[g.id]||'', err = val.includes(' ');
         return (
-          <div key={g.id} className="qcard fu" style={{animationDelay:`${i*55}ms`}}>
+          <div key={g.id} id={g.id} className="qcard fu" style={{animationDelay:`${i*55}ms`}}>
             <div style={{display:'flex',alignItems:'flex-start',gap:10,marginBottom:10}}>
               <QNumBadge n={i+27} />
               <div style={{flex:1}}>

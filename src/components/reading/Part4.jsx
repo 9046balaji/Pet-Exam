@@ -92,7 +92,7 @@ export function Part4Right({ answers }) {
         const assigned = answers[`q4_${n}`];
         const sent = assigned ? EXAM_DATA.part4.sentences.find(s=>s.id===assigned) : null;
         return (
-          <div key={n} className="qcard mb-3">
+          <div key={n} id={`q4_${n}`} className="qcard mb-3">
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:assigned?8:0}}>
               <QNumBadge n={n+15} />
               <span className="text-text font-semibold" style={{fontSize:'.9em'}}>Gap {n}</span>

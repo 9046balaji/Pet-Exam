@@ -411,3 +411,28 @@ body {
     overflow-y: visible !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   HIGHLIGHT FLASH ANIMATION
+   ═══════════════════════════════════════════════════════════════════ */
+@keyframes highlightFlash {
+  0% {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 6px rgba(108, 92, 231, 0.4);
+    background-color: var(--color-primary-light);
+    transform: scale(1.02);
+  }
+  50% {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 8px rgba(108, 92, 231, 0.6);
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.highlight-flash {
+  animation: highlightFlash 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 10;
+  position: relative;
+}

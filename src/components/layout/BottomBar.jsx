@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EXAM_DATA } from "../../data/readingData";
+import ReviewModal from "./ReviewModal";
 
 const ALL_QIDS = [
   ...EXAM_DATA.part1.questions.map(q=>({id:q.id,part:1})),
@@ -12,6 +13,7 @@ const ALL_QIDS = [
 
 export default function BottomBar({ currentPart, setCurrent, answers, flagged, onSubmit }) {
   const [showNav, setShowNav] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   
   const getStatus = (id) => {
     const a = answers[id];
@@ -51,15 +53,20 @@ export default function BottomBar({ currentPart, setCurrent, answers, flagged, o
           style={{padding:'8px 18px',borderRadius:9,border:'1.5px solid #6C5CE7',background:currentPart===6?'transparent':'#6C5CE7',color:currentPart===6?'#CBD5E1':'#fff',cursor:currentPart===6?'not-allowed':'pointer',fontFamily:'Outfit,system-ui',fontWeight:600,fontSize:'.88em',transition:'all 150ms',opacity:currentPart===6?.5:1}}>
           Next →
         </button>
-        <button onClick={()=>{
-          const unanswered = 32 - Object.values(answers).filter(v=>v&&v.trim()!=='').length;
-          if(unanswered > 0) { if(!window.confirm(`You have ${unanswered} unanswered question${unanswered!==1?'s':''}. Submit anyway?`)) return; }
-          onSubmit();
-        }}
+        <button onClick={() => setShowReviewModal(true)}
           style={{padding:'8px 16px',borderRadius:9,border:'none',background:'#E17055',color:'#fff',cursor:'pointer',fontFamily:'Outfit,system-ui',fontWeight:700,fontSize:'.86em',transition:'all 150ms',boxShadow:'0 2px 8px rgba(225,112,85,.4)'}}>
           Submit Paper
         </button>
       </div>
+
+      <ReviewModal
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        answers={answers}
+        flagged={flagged}
+        onSubmit={onSubmit}
+        setCurrentPart={setCurrent}
+      />
     </div>
   );
 }

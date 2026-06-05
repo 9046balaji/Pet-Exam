@@ -16,7 +16,7 @@ export default function QuestionCard({
   const isWrong = submitted && ans && ans !== question.correct;
 
   return (
-    <div className="qcard fu" style={{ animationDelay: `${delay}ms` }}>
+    <div id={question.id} className="qcard fu" style={{ animationDelay: `${delay}ms` }}>
       <div className="flex items-start gap-2.5 mb-3">
         <QNumBadge n={qNum} />
         <span className="text-[0.88em] font-medium leading-normal text-text flex-1 pt-0.5">
