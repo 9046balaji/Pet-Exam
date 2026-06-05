@@ -209,6 +209,7 @@ export default function Navbar({
 
             {/* Settings button */}
             <button
+              onClick={() => { setPaperMode("settings"); setSidebarOpen(false); }}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-[1.1em] text-white/60 hover:text-white hover:bg-white/5 transition-all cursor-pointer duration-300 hover:rotate-45 shrink-0"
               title="Settings"
             >
@@ -260,6 +261,10 @@ export function TopHeader({
     breadcrumbHeader = "Student Dashboard";
     breadcrumbActiveLabel = "Attempt History";
     breadcrumbActiveIcon = "📋";
+  } else if (paperMode === "settings") {
+    breadcrumbHeader = "Settings";
+    breadcrumbActiveLabel = "Preferences";
+    breadcrumbActiveIcon = "⚙";
   }
 
   return (
@@ -346,6 +351,7 @@ export function TopHeader({
 
         {/* Settings */}
         <button
+          onClick={() => setPaperMode("settings")}
           className="w-8 h-8 rounded-lg flex items-center justify-center text-[1.1em] text-text-light hover:text-text hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer duration-300 hover:rotate-45"
           title="Settings"
         >

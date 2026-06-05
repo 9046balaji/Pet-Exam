@@ -21,6 +21,7 @@ export function Part6Left({ answers, setAnswer, fontScale }) {
                 <input className={`iinp${err?' err':''}`} value={val}
                   onChange={e=>setAnswer(g.id,e.target.value)}
                   maxLength={20} placeholder={`(${seg.n})`}
+                  autoCapitalize="none" autoCorrect="off" spellCheck={false}
                   title={err?'Write only ONE word':''} />
                 {err&&<span style={{position:'absolute',top:-22,left:'50%',transform:'translateX(-50%)',background:'var(--color-danger)',color:'#fff',fontSize:'.7em',padding:'2px 8px',borderRadius:4,whiteSpace:'nowrap',zIndex:20,pointerEvents:'none'}}>One word only!</span>}
               </span>
@@ -51,8 +52,9 @@ export function Part6Right({ answers, setAnswer, flagged, toggleFlag }) {
             </div>
             <input type="text" value={val} placeholder="Type one word…"
               onChange={e=>setAnswer(g.id,e.target.value)}
-              className="w-full rounded-lg outline-none transition-colors bg-primary-light dark:bg-primary-dark/30 text-primary font-[Outfit,system-ui]"
-              style={{padding:'8px 12px',border:`2px solid ${err?'var(--color-danger)':'var(--color-primary)'}`,fontSize:'.9em'}} />
+              autoCapitalize="none" autoCorrect="off" spellCheck={false}
+              className="w-full rounded-lg outline-none transition-colors bg-primary-light dark:bg-primary-dark/30 text-primary"
+              style={{padding:'8px 12px',border:`2px solid ${err?'var(--color-danger)':'var(--color-primary)'}`,fontSize:'.9em',fontFamily:'var(--font-family-ui)'}} />
             {err&&<div className="text-danger font-semibold" style={{fontSize:'.78em',marginTop:4}}>⚠ Write only ONE word per gap.</div>}
             {val&&!err&&<button className="text-text-light hover:text-text-muted" style={{marginTop:4,fontSize:'.75em',background:'none',border:'none',cursor:'pointer'}} onClick={()=>setAnswer(g.id,'')}>Clear ×</button>}
           </div>
